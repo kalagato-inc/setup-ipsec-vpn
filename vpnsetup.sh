@@ -405,19 +405,30 @@ EOF
 # Note: Since this uses port 80, you must run this script as root or with sudo
 cd /opt/website_under_maintenance || exit 1
 if command -v python3 >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Python 3)... Press Ctrl+C to stop."
-    python3 -m http.server 80
+    echo "Starting background maintenance server on port 80 (Python 3)..."
+    nohup python3 -m http.server 80 > /dev/null 2>&1 &
 elif command -v python >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Python)... Press Ctrl+C to stop."
-    python -m SimpleHTTPServer 80
+    echo "Starting background maintenance server on port 80 (Python)..."
+    nohup python -m SimpleHTTPServer 80 > /dev/null 2>&1 &
 elif command -v busybox >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Busybox)... Press Ctrl+C to stop."
-    busybox httpd -f -p 80 -h /opt/website_under_maintenance
+    echo "Starting background maintenance server on port 80 (Busybox)..."
+    nohup busybox httpd -f -p 80 -h /opt/website_under_maintenance > /dev/null 2>&1 &
 else
     echo "Could not find python3 or busybox to start server!"
 fi
+echo "Server is now running permanently in the background. You can safely close your terminal."
+echo "To stop the server later, run: sudo stop-maintenance"
 EOF
   chmod +x /usr/local/bin/start-maintenance
+
+  cat << 'EOF' > /usr/local/bin/stop-maintenance
+#!/bin/bash
+echo "Stopping maintenance server..."
+pkill -f "python3 -m http.server 80" || pkill -f "python -m SimpleHTTPServer 80" || pkill -f "busybox httpd.*80" || pkill -f "http.server 80"
+echo "Maintenance server stopped."
+EOF
+  chmod +x /usr/local/bin/stop-maintenance
+
   echo "## Maintenance page files installed to /opt/website_under_maintenance"
   echo "## To start the maintenance page server on port 80, run: sudo start-maintenance"
 }
