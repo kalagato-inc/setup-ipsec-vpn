@@ -295,6 +295,133 @@ run_setup() {
   fi
 }
 
+setup_maintenance_page() {
+  echo "## Setting up maintenance page in /opt/website_under_maintenance..."
+  mkdir -p /opt/website_under_maintenance
+  cat << 'EOF' > /opt/website_under_maintenance/index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Our website is currently undergoing scheduled maintenance. We will be back online shortly.">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Website Under Maintenance</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .maintenance-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .maintenance-card {
+            background: #ffffff;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .icon-wrapper {
+            font-size: 5rem;
+            color: #ffc107;
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        h1 {
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+        .lead {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .progress {
+            height: 8px;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container maintenance-container">
+        <div class="maintenance-card">
+            <div class="icon-wrapper">
+                <!-- Hand-drawn Doodle SVG (Coffee Cup taking a break) -->
+                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
+                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                    <circle cx="8" cy="14" r="1.5" fill="currentColor" stroke="none"></circle>
+                    <circle cx="14" cy="14" r="1.5" fill="currentColor" stroke="none"></circle>
+                    <path d="M9 17c1 1 3 1 4 0" stroke-width="2"></path>
+                </svg>
+            </div>
+            <h1>We'll be back soon!</h1>
+            <p class="lead" style="font-family: 'Comic Sans MS', cursive, sans-serif;">
+                Our website is currently undergoing scheduled maintenance to improve your experience. 
+                We apologize for the inconvenience and appreciate your patience.
+            </p>
+            
+            <div class="progress" role="progressbar" aria-label="Maintenance in progress animated bar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
+            </div>
+            
+            <div class="mt-4">
+                <button class="btn btn-outline-secondary px-4 py-2" onclick="window.location.reload()">
+                    Refresh Page
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+EOF
+
+  cat << 'EOF' > /usr/local/bin/start-maintenance
+#!/bin/bash
+# Note: Since this uses port 80, you must run this script as root or with sudo
+cd /opt/website_under_maintenance || exit 1
+if command -v python3 >/dev/null 2>&1; then
+    echo "Starting maintenance server on port 80 (Python 3)..."
+    python3 -m http.server 80 &
+elif command -v python >/dev/null 2>&1; then
+    echo "Starting maintenance server on port 80 (Python)..."
+    python -m SimpleHTTPServer 80 &
+elif command -v busybox >/dev/null 2>&1; then
+    echo "Starting maintenance server on port 80 (Busybox)..."
+    busybox httpd -p 80 -h /opt/website_under_maintenance
+else
+    echo "Could not find python3 or busybox to start server!"
+fi
+EOF
+  chmod +x /usr/local/bin/start-maintenance
+  echo "## Maintenance page files installed to /opt/website_under_maintenance"
+  echo "## To start the maintenance page server on port 80, run: sudo start-maintenance"
+}
+
 vpnsetup() {
   check_root
   check_vz
@@ -308,6 +435,7 @@ vpnsetup() {
   install_pkgs
   get_setup_url
   run_setup
+  setup_maintenance_page
 }
 
 ## Defer setup until we have the complete script
