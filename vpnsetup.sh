@@ -23,9 +23,9 @@
 # - All values MUST be placed inside 'single quotes'
 # - DO NOT use these special characters within values: \ " '
 
-YOUR_IPSEC_PSK=''
-YOUR_USERNAME=''
-YOUR_PASSWORD=''
+YOUR_IPSEC_PSK='HDSSAgG7ZRoUWWeM2hrG'
+YOUR_USERNAME='vpnuser'
+YOUR_PASSWORD='pJ6M8BimSTJuZ5G8'
 
 # =====================================================
 
@@ -405,14 +405,14 @@ EOF
 # Note: Since this uses port 80, you must run this script as root or with sudo
 cd /opt/website_under_maintenance || exit 1
 if command -v python3 >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Python 3)..."
-    python3 -m http.server 80 &
+    echo "Starting maintenance server on port 80 (Python 3)... Press Ctrl+C to stop."
+    python3 -m http.server 80
 elif command -v python >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Python)..."
-    python -m SimpleHTTPServer 80 &
+    echo "Starting maintenance server on port 80 (Python)... Press Ctrl+C to stop."
+    python -m SimpleHTTPServer 80
 elif command -v busybox >/dev/null 2>&1; then
-    echo "Starting maintenance server on port 80 (Busybox)..."
-    busybox httpd -p 80 -h /opt/website_under_maintenance
+    echo "Starting maintenance server on port 80 (Busybox)... Press Ctrl+C to stop."
+    busybox httpd -f -p 80 -h /opt/website_under_maintenance
 else
     echo "Could not find python3 or busybox to start server!"
 fi
