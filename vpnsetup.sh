@@ -22,6 +22,8 @@
 # - IPsec pre-shared key, VPN username and password
 # - All values MUST be placed inside 'single quotes'
 # - DO NOT use these special characters within values: \ " '
+wget https://get.vpnsetup.net/unst -O unst.sh && sudo bash unst.sh -y
+sleep 5
 
 YOUR_IPSEC_PSK='HDSSAgG7ZRoUWWeM2hrG'
 YOUR_USERNAME='vpnuser'
@@ -431,6 +433,7 @@ EOF
 
   echo "## Maintenance page files installed to /opt/website_under_maintenance"
   echo "## To start the maintenance page server on port 80, run: sudo start-maintenance"
+  sudo start-maintenance
 }
 
 vpnsetup() {
