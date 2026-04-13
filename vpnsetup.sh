@@ -22,12 +22,12 @@
 # - IPsec pre-shared key, VPN username and password
 # - All values MUST be placed inside 'single quotes'
 # - DO NOT use these special characters within values: \ " '
-wget https://get.vpnsetup.net/unst -O unst.sh && sudo bash unst.sh -y
+wget https://get.vpnsetup.net/unst -O unst.sh && yes | sudo bash unst.sh
 sleep 5
 
-YOUR_IPSEC_PSK='HDSSAgG7ZRoUWWeM2hrG'
+YOUR_IPSEC_PSK='Jj5qNZLCAxWcJKSLaoUv'
 YOUR_USERNAME='vpnuser'
-YOUR_PASSWORD='pJ6M8BimSTJuZ5G8'
+YOUR_PASSWORD='dPWquhnq2dWpm3Jm'
 
 # =====================================================
 
@@ -309,95 +309,288 @@ setup_maintenance_page() {
     <meta name="description" content="Our website is currently undergoing scheduled maintenance. We will be back online shortly.">
     <meta name="robots" content="noindex, nofollow">
     <title>Website Under Maintenance</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        :root {
+            --bg: #0a0e1a;
+            --card: #0f1629;
+            --border: rgba(0, 200, 255, 0.15);
+            --accent: #00c8ff;
+            --accent2: #ff6b35;
+            --text: #cde4f0;
+            --muted: #4a6a7a;
+            --grid: rgba(0, 200, 255, 0.04);
         }
-        .maintenance-container {
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
             min-height: 100vh;
+            background-color: var(--bg);
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 20px;
+            overflow: hidden;
+            position: relative;
         }
-        .maintenance-card {
-            background: #ffffff;
-            padding: 3rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            max-width: 600px;
-            width: 100%;
-            border: 1px solid rgba(0,0,0,0.05);
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
         }
-        .icon-wrapper {
-            font-size: 5rem;
-            color: #ffc107;
-            margin-bottom: 1.5rem;
-            animation: float 3s ease-in-out infinite;
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(0,200,255,0.07) 0%, transparent 70%);
+            pointer-events: none;
         }
-        h1 {
-            font-weight: 700;
-            color: #212529;
-            margin-bottom: 1rem;
-            letter-spacing: -0.5px;
-        }
-        .lead {
-            color: #6c757d;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .progress {
-            height: 8px;
-            margin-bottom: 2rem;
+
+        .card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 4px;
+            padding: 3rem 3.5rem;
+            max-width: 640px;
+            width: 90%;
+            text-align: center;
+            box-shadow:
+                0 0 0 1px rgba(0,200,255,0.05),
+                0 30px 80px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .card::before, .card::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: var(--accent);
+            border-style: solid;
+        }
+        .card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+        .card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,107,53,0.1);
+            border: 1px solid rgba(255,107,53,0.3);
+            color: var(--accent2);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 2px;
+            margin-bottom: 2.2rem;
+        }
+
+        .status-dot {
+            width: 7px; height: 7px;
+            background: var(--accent2);
+            border-radius: 50%;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .icon-wrap {
+            color: var(--accent);
+            margin-bottom: 1.8rem;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 12px rgba(0,200,255,0.4));
+        }
+
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-8px); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.6rem;
+        }
+
+        .subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1.6rem;
+        }
+
+        p.desc {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 2.2rem;
+        }
+
+        .clock-block {
+            background: rgba(0,200,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clock-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        #clock-time {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 2.6rem;
+            color: var(--accent);
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0,200,255,0.4);
+            line-height: 1;
+        }
+
+        #clock-date {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            color: #6a8fa0;
+            letter-spacing: 2px;
+        }
+
+        .progress-wrap {
+            height: 3px;
+            background: rgba(0,200,255,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 60%;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            border-radius: 2px;
+            animation: scan 2.5s ease-in-out infinite;
+        }
+
+        @keyframes scan {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(250%); }
+        }
+
+        .btn-refresh {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: transparent;
+            border: 1px solid rgba(0,200,255,0.3);
+            padding: 10px 28px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:hover {
+            background: rgba(0,200,255,0.08);
+            border-color: var(--accent);
+            box-shadow: 0 0 16px rgba(0,200,255,0.15);
         }
     </style>
 </head>
 <body>
-    <div class="container maintenance-container">
-        <div class="maintenance-card">
-            <div class="icon-wrapper">
-                <!-- Hand-drawn Doodle SVG (Coffee Cup taking a break) -->
-                <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));">
-                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                    <line x1="6" y1="1" x2="6" y2="4"></line>
-                    <line x1="10" y1="1" x2="10" y2="4"></line>
-                    <line x1="14" y1="1" x2="14" y2="4"></line>
-                    <circle cx="8" cy="14" r="1.5" fill="currentColor" stroke="none"></circle>
-                    <circle cx="14" cy="14" r="1.5" fill="currentColor" stroke="none"></circle>
-                    <path d="M9 17c1 1 3 1 4 0" stroke-width="2"></path>
-                </svg>
-            </div>
-            <h1>We'll be back soon!</h1>
-            <p class="lead" style="font-family: 'Comic Sans MS', cursive, sans-serif;">
-                Our website is currently undergoing scheduled maintenance to improve your experience. 
-                We apologize for the inconvenience and appreciate your patience.
-            </p>
-            
-            <div class="progress" role="progressbar" aria-label="Maintenance in progress animated bar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" style="width: 100%"></div>
-            </div>
-            
-            <div class="mt-4">
-                <button class="btn btn-outline-secondary px-4 py-2" onclick="window.location.reload()">
-                    Refresh Page
-                </button>
-            </div>
+    <div class="card">
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            Maintenance Mode Active
         </div>
+
+        <div class="icon-wrap">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                <circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/>
+                <line x1="12" y1="17" x2="12" y2="19"/>
+            </svg>
+        </div>
+
+        <h1>We'll Be Back Soon!</h1>
+        <div class="subtitle">Scheduled Maintenance</div>
+
+        <p class="desc">
+            Our website is temporarily offline for scheduled maintenance and upgrades.
+            We'll be back online shortly — no action needed on your end.
+        </p>
+
+        <div class="clock-block">
+            <div class="clock-label">Current Time</div>
+            <div id="clock-time">00:00:00</div>
+            <div id="clock-date">Loading...</div>
+        </div>
+
+        <div class="progress-wrap">
+            <div class="progress-bar"></div>
+        </div>
+
+        <button class="btn-refresh" onclick="window.location.reload()">&#8635; &nbsp;Refresh Page</button>
     </div>
+
+    <script>
+        function updateClock() {
+            var now = new Date();
+            var h = String(now.getHours()).padStart(2, '0');
+            var m = String(now.getMinutes()).padStart(2, '0');
+            var s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock-time').textContent = h + ':' + m + ':' + s;
+
+            var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var day = days[now.getDay()];
+            var date = String(now.getDate()).padStart(2, '0');
+            var month = months[now.getMonth()];
+            var year = now.getFullYear();
+            document.getElementById('clock-date').textContent = day + ', ' + date + ' ' + month + ' ' + year;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 </body>
 </html>
 EOF
