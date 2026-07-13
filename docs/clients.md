@@ -494,7 +494,7 @@ Check the Libreswan (IPsec) and xl2tpd logs for errors:
 grep pluto /var/log/auth.log
 grep xl2tpd /var/log/syslog
 
-# CentOS/RHEL, Rocky Linux, AlmaLinux, Oracle Linux & Amazon Linux 2
+# CentOS/RHEL, Rocky Linux, AlmaLinux & Oracle Linux
 grep pluto /var/log/secure
 grep xl2tpd /var/log/messages
 
@@ -502,6 +502,8 @@ grep xl2tpd /var/log/messages
 grep pluto /var/log/messages
 grep xl2tpd /var/log/messages
 ```
+
+If Libreswan logs errors such as `Protocol not supported (errno 93)` or `Adding IPsec SA failed`, see [IPsec SA errors](ikev2-howto.md#ipsec-sa-errors).
 
 Check the status of the IPsec VPN server:
 

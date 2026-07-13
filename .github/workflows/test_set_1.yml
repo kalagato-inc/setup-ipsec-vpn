@@ -11,6 +11,9 @@ name: test_set_1
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   test_set_1:
     runs-on: ubuntu-22.04
@@ -22,7 +25,7 @@ jobs:
     env:
       OS_VERSION: ${{ matrix.os_version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Build
@@ -123,6 +126,7 @@ jobs:
           netstat -anpu | grep xl2tpd
           if grep -qsE 'release (9|1[0-9])' /etc/redhat-release; then
             nft list ruleset
+            nft -c -f /etc/sysconfig/nftables.conf
             nft list ruleset | grep -q '192\.168\.42\.0/24'
             nft list ruleset | grep -q '192\.168\.43\.0/24'
           else
@@ -190,6 +194,7 @@ jobs:
           netstat -anpu | grep xl2tpd
           if grep -qsE 'release (9|1[0-9])' /etc/redhat-release; then
             nft list ruleset
+            nft -c -f /etc/sysconfig/nftables.conf
             nft list ruleset | grep -q '192\.168\.42\.0/24'
             nft list ruleset | grep -q '192\.168\.43\.0/24'
           else
@@ -514,7 +519,7 @@ jobs:
           cp -f /opt/src/scripts/extras/vpnupgrade.sh ./vpnup.sh
           sed -i '/curl /a sed -i "/swan_ver_latest=/s/^/#/" "$tmpdir/vpnup.sh"' vpnup.sh
 
-          ver=5.2
+          ver=5.3
           sed -i "s/^SWAN_VER=.*/SWAN_VER=$ver/" vpnup.sh
           bash vpnup.sh <<ANSWERS
 
@@ -528,7 +533,7 @@ jobs:
           cp -f /opt/src/scripts/extras/vpnupgrade_centos.sh ./vpnup.sh
           sed -i '/swan_ver_latest=/s/^/#/' vpnup.sh
 
-          ver=5.3
+          ver=5.3.1
           bash vpnup.sh <<ANSWERS
 
           ANSWERS
